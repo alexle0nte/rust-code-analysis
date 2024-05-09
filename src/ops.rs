@@ -371,8 +371,7 @@ mod tests {
               println!(\"{}\", avg);
             }",
             "foo.rs",
-            // FIXME tree-sitter-rust does not parse the comma inside the println! macro
-            &mut ["fn", "()", "{}", "let", "=", "+", "/", ";", "!"],
+            &mut ["fn", "()", "{}", "let", "=", "+", "/", ";", "!", ","],
             &mut ["main", "a", "b", "c", "avg", "5", "3", "println", "\"{}\""],
         );
     }
