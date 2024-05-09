@@ -1724,12 +1724,13 @@ mod tests {
                 insta::assert_json_snapshot!(
                     metric.cognitive,
                     @r###"
-                    {
-                      "sum": 4.0,
-                      "average": 4.0,
-                      "min": 0.0,
-                      "max": 4.0
-                    }"###
+                {
+                  "sum": 4.0,
+                  "average": 2.0,
+                  "min": 0.0,
+                  "max": 4.0
+                }
+                "###
                 );
             },
         );

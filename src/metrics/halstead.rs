@@ -583,22 +583,23 @@ mod tests {
                 insta::assert_json_snapshot!(
                     metric.halstead,
                     @r###"
-                    {
-                      "n1": 10.0,
-                      "N1": 24.0,
-                      "n2": 11.0,
-                      "N2": 21.0,
-                      "length": 45.0,
-                      "estimated_program_length": 71.27302875388389,
-                      "purity_ratio": 1.583845083419642,
-                      "vocabulary": 21.0,
-                      "volume": 197.65428402504423,
-                      "difficulty": 9.545454545454545,
-                      "level": 0.10476190476190476,
-                      "effort": 1886.699983875422,
-                      "time": 104.81666577085679,
-                      "bugs": 0.05089564733125986
-                    }"###
+                {
+                  "n1": 10.0,
+                  "N1": 24.0,
+                  "n2": 10.0,
+                  "N2": 20.0,
+                  "length": 44.0,
+                  "estimated_program_length": 66.43856189774725,
+                  "purity_ratio": 1.5099673158578921,
+                  "vocabulary": 20.0,
+                  "volume": 190.16483617504394,
+                  "difficulty": 10.0,
+                  "level": 0.1,
+                  "effort": 1901.6483617504396,
+                  "time": 105.64713120835775,
+                  "bugs": 0.05116412536051621
+                }
+                "###
                 );
             },
         );

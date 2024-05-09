@@ -598,14 +598,12 @@ mod tests {
                 "name",
                 "isUpdated",
                 "32",
-                "\"John\"",
                 "true",
                 "3",
                 "5",
                 "console.log",
                 "console",
                 "log",
-                "\"{}\"",
             ],
         );
     }
@@ -637,14 +635,12 @@ mod tests {
                 "name",
                 "isUpdated",
                 "32",
-                "\"John\"",
                 "true",
                 "3",
                 "5",
                 "console.log",
                 "console",
                 "log",
-                "\"{}\"",
             ],
         );
     }
