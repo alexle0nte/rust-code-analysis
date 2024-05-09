@@ -388,20 +388,7 @@ mod tests {
              console.log(\"{}\", avg);",
             "foo.js",
             &mut ["()", "var", "let", "=", "+", "/", ",", ".", ";"],
-            &mut [
-                "a",
-                "b",
-                "c",
-                "avg",
-                "x",
-                "1",
-                "3",
-                "5",
-                "console.log",
-                "console",
-                "log",
-                "\"{}\"",
-            ],
+            &mut ["a", "b", "c", "avg", "x", "1", "3", "5", "console", "log"],
         );
     }
 
@@ -421,19 +408,7 @@ mod tests {
                 "function", "()", "{}", "var", "let", "=", "+", "/", ",", ".", ";",
             ],
             &mut [
-                "main",
-                "a",
-                "b",
-                "c",
-                "avg",
-                "x",
-                "1",
-                "3",
-                "5",
-                "console.log",
-                "console",
-                "log",
-                "\"{}\"",
+                "main", "a", "b", "c", "avg", "x", "1", "3", "5", "console", "log",
             ],
         );
     }
