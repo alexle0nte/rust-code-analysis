@@ -66,9 +66,20 @@ pub trait ParserTrait {
     fn get_filters(&self, filters: &[String]) -> Filter;
 }
 
-pub(crate) trait Search<'a> {
-    fn first_occurence(&self, pred: fn(u16) -> bool) -> Option<Node<'a>>;
+/// Search.
+pub trait Search<'a> {
+    /// Starting from this node gets the first occurence that meets the predicate.
+    fn first_occurence<F: Fn(&Node<'a>) -> bool>(&self, pred: F) -> Option<Node<'a>>;
+
+    /// Starting from this node gets all nodes that meet the given predicate.
+    fn all_occurrences<F: Fn(&Node<'a>) -> bool>(&self, pred: F) -> Vec<Node<'a>>;
+
+    /// Apply the given predicate on this node.
     fn act_on_node(&self, pred: &mut dyn FnMut(&Node<'a>));
-    fn first_child(&self, pred: fn(u16) -> bool) -> Option<Node<'a>>;
+
+    /// Starting from this node gets the first child that meets the predicate.
+    fn first_child<F: Fn(&Node<'a>) -> bool>(&self, pred: F) -> Option<Node<'a>>;
+
+    /// Apply the given predicate on node's children.
     fn act_on_child(&self, action: &mut dyn FnMut(&Node<'a>));
 }

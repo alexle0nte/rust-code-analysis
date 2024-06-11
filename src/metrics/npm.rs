@@ -224,7 +224,7 @@ impl Npm for JavaCode {
                         if let Some(modifiers) = method.child(0) {
                             // Looks for the `public` keyword in the list of method modifiers
                             if matches!(modifiers.kind_id().into(), Modifiers)
-                                && modifiers.first_child(|id| id == Public).is_some()
+                                && modifiers.first_child(|child| child.kind_id() == Public).is_some()
                             {
                                 stats.class_npm += 1;
                             }

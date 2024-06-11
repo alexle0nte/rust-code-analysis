@@ -415,17 +415,17 @@ impl Getter for CppCode {
     fn get_func_space_name<'a>(node: &Node, code: &'a [u8]) -> Option<&'a str> {
         match node.kind_id().into() {
             Cpp::FunctionDefinition | Cpp::FunctionDefinition2 | Cpp::FunctionDefinition3 => {
-                if let Some(op_cast) = node.first_child(|id| Cpp::OperatorCast == id) {
+                if let Some(op_cast) = node.first_child(|child| Cpp::OperatorCast == child.kind_id()) {
                     let code = &code[op_cast.start_byte()..op_cast.end_byte()];
                     return std::str::from_utf8(code).ok();
                 }
                 // we're in a function_definition so need to get the declarator
                 if let Some(declarator) = node.child_by_field_name("declarator") {
                     let declarator_node = declarator;
-                    if let Some(fd) = declarator_node.first_occurence(|id| {
-                        Cpp::FunctionDeclarator == id
-                            || Cpp::FunctionDeclarator2 == id
-                            || Cpp::FunctionDeclarator3 == id
+                    if let Some(fd) = declarator_node.first_occurence(|occurence| {
+                        Cpp::FunctionDeclarator == occurence.kind_id()
+                            || Cpp::FunctionDeclarator2 == occurence.kind_id()
+                            || Cpp::FunctionDeclarator3 == occurence.kind_id()
                     }) {
                         if let Some(first) = fd.child(0) {
                             match first.kind_id().into() {

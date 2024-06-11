@@ -61,7 +61,7 @@ mod metrics;
 pub use metrics::*;
 
 mod languages;
-pub(crate) use languages::*;
+pub use languages::*;
 
 mod checker;
 pub(crate) use checker::*;

@@ -5,11 +5,13 @@ use tree_sitter::{Parser, TreeCursor};
 use crate::checker::Checker;
 use crate::traits::{LanguageInfo, Search};
 
+/// An `AST`.
 #[derive(Clone)]
-pub(crate) struct Tree(OtherTree);
+pub struct Tree(OtherTree);
 
 impl Tree {
-    pub(crate) fn new<T: LanguageInfo>(code: &[u8]) -> Self {
+    /// Creates a new [`Tree`] instance.
+    pub fn new<T: LanguageInfo>(code: &[u8]) -> Self {
         let mut parser = Parser::new();
         parser
             .set_language(&T::get_lang().get_ts_language())
@@ -18,7 +20,8 @@ impl Tree {
         Self(parser.parse(code, None).unwrap())
     }
 
-    pub(crate) fn get_root(&self) -> Node {
+    /// Gets the tree's root.
+    pub fn get_root(&self) -> Node {
         Node(self.0.root_node())
     }
 }
@@ -34,54 +37,66 @@ impl<'a> Node<'a> {
         self.0.has_error()
     }
 
-    pub(crate) fn id(&self) -> usize {
+    /// Gets a numeric id for this node that is unique.
+    pub fn id(&self) -> usize {
         self.0.id()
     }
 
-    pub(crate) fn kind(&self) -> &'static str {
+    /// Gets this node's type as a string.
+    pub fn kind(&self) -> &'static str {
         self.0.kind()
     }
 
-    pub(crate) fn kind_id(&self) -> u16 {
+    /// Gets this node's type as a numerical id.
+    pub fn kind_id(&self) -> u16 {
         self.0.kind_id()
     }
 
-    pub(crate) fn utf8_text(&self, data: &'a [u8]) -> Option<&'a str> {
+    /// Gets this node's text.
+    pub fn utf8_text(&self, data: &'a [u8]) -> Option<&'a str> {
         self.0.utf8_text(data).ok()
     }
 
-    pub(crate) fn start_byte(&self) -> usize {
+    /// Gets the byte offsets where this node starts. 
+    pub fn start_byte(&self) -> usize {
         self.0.start_byte()
     }
 
-    pub(crate) fn end_byte(&self) -> usize {
+    /// Gets the byte offsets where this node end. 
+    pub fn end_byte(&self) -> usize {
         self.0.end_byte()
     }
 
-    pub(crate) fn start_position(&self) -> (usize, usize) {
+    /// Gets this node's start position in terms of rows and columns.
+    pub fn start_position(&self) -> (usize, usize) {
         let temp = self.0.start_position();
         (temp.row, temp.column)
     }
 
-    pub(crate) fn end_position(&self) -> (usize, usize) {
+    /// Gets this node's end position in terms of rows and columns.
+    pub fn end_position(&self) -> (usize, usize) {
         let temp = self.0.end_position();
         (temp.row, temp.column)
     }
 
-    pub(crate) fn start_row(&self) -> usize {
+    /// Gets this node's start position in terms of rows and columns.
+    pub fn start_row(&self) -> usize {
         self.0.start_position().row
     }
 
-    pub(crate) fn end_row(&self) -> usize {
+    /// Gets this node's end position in terms of rows and columns.
+    pub fn end_row(&self) -> usize {
         self.0.end_position().row
     }
 
-    pub(crate) fn parent(&self) -> Option<Node<'a>> {
+    /// Gets this node's immediate parent.
+    pub fn parent(&self) -> Option<Node<'a>> {
         self.0.parent().map(Node)
     }
 
+    /// Checks where this node has a sibling with the given id.
     #[inline(always)]
-    pub(crate) fn has_sibling(&self, id: u16) -> bool {
+    pub fn has_sibling(&self, id: u16) -> bool {
         self.0.parent().map_or(false, |parent| {
             self.0
                 .children(&mut parent.walk())
@@ -89,34 +104,41 @@ impl<'a> Node<'a> {
         })
     }
 
-    pub(crate) fn previous_sibling(&self) -> Option<Node<'a>> {
+    /// Gets this node's previous sibling.
+    pub fn previous_sibling(&self) -> Option<Node<'a>> {
         self.0.prev_sibling().map(Node)
     }
 
-    pub(crate) fn next_sibling(&self) -> Option<Node<'a>> {
+    /// Gets this node's previous sibling.
+    pub fn next_sibling(&self) -> Option<Node<'a>> {
         self.0.next_sibling().map(Node)
     }
 
+    /// Checks where this node has a child with the given id.
     #[inline(always)]
-    pub(crate) fn is_child(&self, id: u16) -> bool {
+    pub fn is_child(&self, id: u16) -> bool {
         self.0
             .children(&mut self.0.walk())
             .any(|child| child.kind_id() == id)
     }
 
-    pub(crate) fn child_count(&self) -> usize {
+    /// Gets this node's number of children.
+    pub fn child_count(&self) -> usize {
         self.0.child_count()
     }
 
-    pub(crate) fn child_by_field_name(&self, name: &str) -> Option<Node> {
+    /// Gets the first child with the given field name.
+    pub fn child_by_field_name(&self, name: &str) -> Option<Node> {
         self.0.child_by_field_name(name).map(Node)
     }
 
-    pub(crate) fn child(&self, pos: usize) -> Option<Node<'a>> {
+    /// Gets the node's child at the given position, where zero represents the first child.
+    pub fn child(&self, pos: usize) -> Option<Node<'a>> {
         self.0.child(pos).map(Node)
     }
 
-    pub(crate) fn children(&self) -> impl ExactSizeIterator<Item = Node<'a>> {
+    /// Gets this node's children.
+    pub fn children(&self) -> impl ExactSizeIterator<Item = Node<'a>> {
         let mut cursor = self.cursor();
         cursor.goto_first_child();
         (0..self.child_count()).map(move |_| {
@@ -126,12 +148,14 @@ impl<'a> Node<'a> {
         })
     }
 
-    pub(crate) fn cursor(&self) -> Cursor<'a> {
+    /// Gets this node's cursor.
+    pub fn cursor(&self) -> Cursor<'a> {
         Cursor(self.0.walk())
     }
 
+    /// Gets this node's parent.
     #[allow(dead_code)]
-    pub(crate) fn get_parent(&self, level: usize) -> Option<Node<'a>> {
+    pub fn get_parent(&self, level: usize) -> Option<Node<'a>> {
         let mut level = level;
         let mut node = *self;
         while level != 0 {
@@ -146,7 +170,8 @@ impl<'a> Node<'a> {
         Some(node)
     }
 
-    pub(crate) fn count_specific_ancestors<T: crate::ParserTrait>(
+    /// Counts how many ancestors meet the `check` predicate until one meets the `stop` one.
+    pub fn count_specific_ancestors<T: crate::ParserTrait>(
         &self,
         check: fn(&Node) -> bool,
         stop: fn(&Node) -> bool,
@@ -165,7 +190,26 @@ impl<'a> Node<'a> {
         count
     }
 
-    pub(crate) fn has_ancestors(&self, typ: fn(&Node) -> bool, typs: fn(&Node) -> bool) -> bool {
+    /// Checks wheter this node has an ancestor that meets the given predicate.
+    pub fn has_ancestor<F: Fn(&Node<'a>) -> bool>(&self, pred: F) -> bool {
+        if let Some(parent) = self.parent() {
+            let mut ancestors = vec![parent];
+            while let Some(ancestor) = ancestors.pop() {
+                if pred(&ancestor) {
+                    return true;
+                } else {
+                    if let Some(p) = ancestor.parent() {
+                        ancestors.push(p);
+                    }
+                }
+            }
+        }
+
+        false
+    }
+
+    /// Checks wheter this node's parent meets the `typ` predicate and the parent of the node's parent meets the `typs` predicate.
+    pub fn has_ancestors(&self, typ: fn(&Node) -> bool, typs: fn(&Node) -> bool) -> bool {
         let mut res = false;
         let mut node = *self;
         if let Some(parent) = node.parent() {
@@ -205,7 +249,7 @@ impl<'a> Cursor<'a> {
 }
 
 impl<'a> Search<'a> for Node<'a> {
-    fn first_occurence(&self, pred: fn(u16) -> bool) -> Option<Node<'a>> {
+    fn first_occurence<F: Fn(&Node<'a>) -> bool>(&self, pred: F) -> Option<Node<'a>> {
         let mut cursor = self.cursor();
         let mut stack = Vec::new();
         let mut children = Vec::new();
@@ -213,7 +257,7 @@ impl<'a> Search<'a> for Node<'a> {
         stack.push(*self);
 
         while let Some(node) = stack.pop() {
-            if pred(node.kind_id()) {
+            if pred(&node) {
                 return Some(node);
             }
             cursor.reset(&node);
@@ -231,6 +275,35 @@ impl<'a> Search<'a> for Node<'a> {
         }
 
         None
+    }
+
+    fn all_occurrences<F: Fn(&Node<'a>) -> bool>(&self, pred: F) -> Vec<Node<'a>> {
+        let mut nodes = Vec::new();
+        let mut cursor = self.cursor();
+        let mut stack = Vec::new();
+        let mut children = Vec::new();
+
+        stack.push(*self);
+
+        while let Some(node) = stack.pop() {
+            if pred(&node) {
+                nodes.push(node);
+            }
+            cursor.reset(&node);
+            if cursor.goto_first_child() {
+                loop {
+                    children.push(cursor.node());
+                    if !cursor.goto_next_sibling() {
+                        break;
+                    }
+                }
+                for child in children.drain(..).rev() {
+                    stack.push(child);
+                }
+            }
+        }
+
+        nodes
     }
 
     fn act_on_node(&self, action: &mut dyn FnMut(&Node<'a>)) {
@@ -257,8 +330,8 @@ impl<'a> Search<'a> for Node<'a> {
         }
     }
 
-    fn first_child(&self, pred: fn(u16) -> bool) -> Option<Node<'a>> {
-        self.children().find(|&child| pred(child.kind_id()))
+    fn first_child<F: Fn(&Node<'a>) -> bool>(&self, pred: F) -> Option<Node<'a>> {
+        self.children().find(|&child| pred(&child))
     }
 
     fn act_on_child(&self, action: &mut dyn FnMut(&Node<'a>)) {

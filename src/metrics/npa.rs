@@ -228,7 +228,7 @@ impl Npa for JavaCode {
                         if declaration.child(0).map_or(false, |modifiers| {
                             // Looks for the `public` keyword in the list of attribute modifiers
                             matches!(modifiers.kind_id().into(), Modifiers)
-                                && modifiers.first_child(|id| id == Public).is_some()
+                                && modifiers.first_child(|child| child.kind_id() == Public).is_some()
                         }) {
                             stats.class_npa += attributes;
                         }
